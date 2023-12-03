@@ -11,12 +11,17 @@ const expressServer = app.listen(8000);
 const io = socketio(expressServer);
 
 io.on("connection", (socket) => {
-  socket.emit("messageFromServer", {data: "Welcome to the SocketIO server!"});
-  socket.on('dataToServer', (dataFromClient) => {
-    console.log(dataFromClient);
+  // build an array to send back info with the img and endpoint for each NS
+  let namespaceData = namespaces.map((ns) => {
+    return {
+      img: ns.img,
+      endpoint: ns.endpoint,
+    }
   });
-  socket.join("level1");
-  socket.to("level1").emit("joined", `${socket.id}: I have joined the level one room`);
+  // console.log(namespaceData);
+  // ! Send the namespaceData back to the client, we'll socket and not io
+  // ! because we only want to send the data to this client (socket).
+  socket.emit("namespaceList", namespaceData);
 });
 
 // loop through each namespace and look for a connection

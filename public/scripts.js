@@ -1,24 +1,24 @@
 const socket = io('http://localhost:8000'); // the / (main) namespace
-// const socket2 = io('http://localhost:8000/admin'); // the /admin namespace
-const socket2 = io('http://localhost:8000/wiki');
-const socket3 = io('http://localhost:8000/mozilla');
-const socket4 = io('http://localhost:8000/linux');
+
+// Listen for namespaceList event, list all namespaces.
+socket.on("namespaceList", (namespaceData) => {
+  console.log("The list of namespaces has arrived!!");
+  // console.log(namespaceData);
+  let namespacesDiv = document.querySelector(".namespaces");
+  namespacesDiv.innerHTML = "";
+  namespaceData.forEach((ns) => {
+    namespacesDiv.innerHTML += `<div class="namespace"><img src="${ns.img}" /></div>`;
+  });
+});
 
 socket.on("messageFromServer", (dataFromServer) => {
   console.log(dataFromServer);
   socket.emit("dataToServer", {data: "Data from the client!"});
 });
 
-socket.on("joined", (msg) => {
-  console.log(msg); 
-});
+// document.querySelector("#message-form").addEventListener("submit", (event) => {
+//   event.preventDefault();
+//   const newMessage = document.querySelector("#user-message").value;
+//   socket.emit("newMessageToServer", {text: newMessage});
+// });
 
-socket2.on("welcome", (dataFromServer) => {
-  console.log(dataFromServer);
-});
-
-document.querySelector("#message-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const newMessage = document.querySelector("#user-message").value;
-  socket.emit("newMessageToServer", {text: newMessage});
-});
